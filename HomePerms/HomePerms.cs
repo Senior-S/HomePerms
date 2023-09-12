@@ -46,6 +46,7 @@ namespace SeniorS.HomePerms
             if (user.Experience < perm.Price)
             {
                 Instance._messageHelper.Say(user, "no_balance", true, perm.Price);
+                cancel = true;
                 return;
             }
 
