@@ -1,6 +1,9 @@
 ﻿using HarmonyLib;
+using Rocket.API;
 using Rocket.API.Collections;
+using Rocket.Core;
 using Rocket.Core.Plugins;
+using Rocket.Unturned.Player;
 using SDG.Unturned;
 using SeniorS.HomePerms.Helpers;
 using SeniorS.HomePerms.Models;
@@ -27,10 +30,30 @@ namespace SeniorS.HomePerms
             harmony = new("com.seniors.homeperms");
             harmony.PatchAll(this.Assembly);
 
+            R.Commands.OnExecuteCommand += OnExecuteCommand;
+
             Logger.Log($"HomePerms v{this.Assembly.GetName().Version}");
             Logger.Log("<<SSPlugins>>");
         }
-        
+
+        private void OnExecuteCommand(IRocketPlayer player, IRocketCommand command, ref bool cancel)
+        {
+            Permission perm = Configuration.Instance.Permissions.FirstOrDefault(c => command.Permissions.Contains(c.Permission));
+            if (perm == null || cancel || player is not UnturnedPlayer) return;
+
+            UnturnedPlayer user = (UnturnedPlayer)player;
+
+            if (user.Experience < perm.Price)
+            {
+                Instance._messageHelper.Say(user, "no_balance", true, perm.Price);
+                return;
+            }
+
+            user.Experience -= perm.Price;
+            string message = _messageHelper.FormatMessage("perm_pay", perm.Price);
+            user.Player.ServerShowHint(message, 2f);
+        }
+
         public BarricadeDrop GetBedByInstanceID(uint instanceid, out InteractableBed interactableBed)
         {
             BarricadeDrop drop = null;
@@ -73,7 +96,7 @@ namespace SeniorS.HomePerms
                     { "no_perm", "A permission with name {0} doesn't exists! To see a list of available permissions do -=color=blue=-/permlist 1-=/color=-" },
                     { "no_balance", "You need at least {0} to buy this permission!" },
                     { "already_own_perm", "You already have this permission, so you can't bought it again!" },
-                    { "perm_bought", "You have successfully buy the {0} permission!" }
+                    { "perm_pay", "You have pay {0} for using this command!" }
                 };
             }
         }
@@ -84,6 +107,8 @@ namespace SeniorS.HomePerms
             Homes.Clear();
 
             harmony.UnpatchAll(this.harmony.Id);
+
+            R.Commands.OnExecuteCommand -= OnExecuteCommand;
 
             Logger.Log("<<SSPlugins>>");
         }

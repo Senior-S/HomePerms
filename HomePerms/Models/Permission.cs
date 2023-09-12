@@ -4,7 +4,7 @@
     {
         public string Name { get; set; }
 
-        public string GroupID { get; set; }
+        public string Permission { get; set; }
 
         public uint Price { get; set; }
     }

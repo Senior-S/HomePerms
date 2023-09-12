@@ -274,7 +274,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\Home.cs" />
-    <Compile Include="Commands\PermBuy.cs" />
     <Compile Include="Commands\PermList.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="HomePerms.cs" />
