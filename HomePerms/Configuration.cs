@@ -15,7 +15,7 @@ namespace SeniorS.HomePerms
                 new Permission
                 {
                     Name = "Vip Upgrade",
-                    Permission = "vip",
+                    PermissionName = "vip",
                     Price = 5000,
                 }
             };

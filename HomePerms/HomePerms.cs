@@ -38,7 +38,7 @@ namespace SeniorS.HomePerms
 
         private void OnExecuteCommand(IRocketPlayer player, IRocketCommand command, ref bool cancel)
         {
-            Permission perm = Configuration.Instance.Permissions.FirstOrDefault(c => command.Permissions.Contains(c.Permission));
+            Permission perm = Configuration.Instance.Permissions.FirstOrDefault(c => command.Permissions.Contains(c.PermissionName));
             if (perm == null || cancel || player is not UnturnedPlayer) return;
 
             UnturnedPlayer user = (UnturnedPlayer)player;
